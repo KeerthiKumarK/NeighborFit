@@ -23,23 +23,12 @@ const SurveyPage = () => {
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const matches = await getNeighborhoodMatches(formData.preferences);
-    console.log("MATCHES:", matches); // ✅ Confirm it's working
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
     localStorage.setItem("userPreferences", JSON.stringify(formData));
-    localStorage.setItem("neighborhoodMatches", JSON.stringify(matches)); // Save results
-    toast.success("Preferences submitted successfully!");
     navigate("/results");
-  } catch (error) {
-    toast.error("Failed to fetch matches. Please try again.");
-    console.error("Error fetching matches:", error);
-  }
-};
-
-
+    toast.success("Preferences submitted successfully!");
+  };
 
   const handleChange = (field, value) => {
     if (step === 1) {
