@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
+import { getNeighborhoodMatches } from "../api/matchApi"; // ✅ make sure this is imported
 
 const SurveyPage = () => {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    environment: "",      // Urban/Suburban/Rural
-    preferences: {        // Range sliders
+    environment: "",
+    preferences: {
       safety: 5,
       nightlife: 5,
       schools: 5,
@@ -21,11 +22,20 @@ const SurveyPage = () => {
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem("userPreferences", JSON.stringify(formData));
-    navigate("/results");
-    toast.success("Preferences submitted successfully!");
+    try {
+      const matches = await getNeighborhoodMatches(formData.preferences);
+
+      localStorage.setItem("userPreferences", JSON.stringify(formData));
+      localStorage.setItem("neighborhoodMatches", JSON.stringify(matches));
+
+      toast.success("Preferences submitted successfully!");
+      navigate("/results");
+    } catch (error) {
+      toast.error("Failed to fetch matches");
+      console.error("API error:", error);
+    }
   };
 
   const handleChange = (field, value) => {

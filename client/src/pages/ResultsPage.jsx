@@ -1,31 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getNeighborhoodMatches } from "../api/matchApi";
 
 const ResultsPage = () => {
-  const [preferences, setPreferences] = useState(null);
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem("userPreferences");
-    if (stored) {
-      const prefs = JSON.parse(stored);
-      setPreferences(prefs);
-      fetchMatches(prefs.preferences);
+    const storedMatches = localStorage.getItem("neighborhoodMatches");
+    if (storedMatches) {
+      setMatches(JSON.parse(storedMatches));
     }
+    setLoading(false);
   }, []);
-
-  const fetchMatches = async (prefs) => {
-    try {
-      const data = await getNeighborhoodMatches(prefs);
-      setMatches(data);
-    } catch (err) {
-      console.error("Error fetching matches", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -48,7 +34,6 @@ const ResultsPage = () => {
             <h2 className="text-2xl font-bold mb-2">{hood.name}</h2>
             <p className="text-xl mb-2">Match Score: <span className="font-bold">{hood.matchScore}%</span></p>
             <div className="flex flex-wrap gap-2 mb-4">
-              {/* Generate tags based on highest attributes */}
               {Object.entries(hood)
                 .filter(([key, val]) =>
                   ["safety", "nightlife", "schools", "parks", "affordability"].includes(key) && val >= 8
