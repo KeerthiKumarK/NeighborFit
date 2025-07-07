@@ -3,43 +3,22 @@ import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import { getNeighborhoodMatches } from "../api/matchApi";
 
-
 const SurveyPage = () => {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    environment: "",      // Urban/Suburban/Rural
-    preferences: {        // Range sliders
+    environment: "",
+    preferences: {
       safety: 5,
       nightlife: 5,
       schools: 5,
       affordability: 5,
       parks: 5,
-    },
-    budget: "",
-    commute: "",
+    }
   });
 
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
-
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const matches = await getNeighborhoodMatches(formData.preferences);
-    console.log("MATCHES:", matches); // ✅ Confirm it's working
-
-    localStorage.setItem("userPreferences", JSON.stringify(formData));
-    localStorage.setItem("neighborhoodMatches", JSON.stringify(matches)); // Save results
-    toast.success("Preferences submitted successfully!");
-    navigate("/results");
-  } catch (error) {
-    toast.error("Failed to fetch matches. Please try again.");
-    console.error("Error fetching matches:", error);
-  }
-};
-
-
 
   const handleChange = (field, value) => {
     if (step === 1) {
@@ -49,8 +28,20 @@ const SurveyPage = () => {
         ...formData,
         preferences: { ...formData.preferences, [field]: value },
       });
-    } else {
-      setFormData({ ...formData, [field]: value });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const matches = await getNeighborhoodMatches(formData.preferences);
+      localStorage.setItem("userPreferences", JSON.stringify(formData));
+      localStorage.setItem("neighborhoodMatches", JSON.stringify(matches));
+      toast.success("Preferences submitted successfully!");
+      navigate("/results");
+    } catch (error) {
+      toast.error("Failed to fetch matches. Please try again.");
+      console.error("Error fetching matches:", error);
     }
   };
 
@@ -60,7 +51,7 @@ const SurveyPage = () => {
         onSubmit={handleSubmit}
         className="bg-white/10 backdrop-blur-lg rounded-xl p-8 w-full max-w-xl shadow-lg"
       >
-        <h2 className="text-3xl font-bold mb-6 text-center">Step {step} of 3</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center">Step {step} of 2</h2>
 
         {step === 1 && (
           <>
@@ -99,36 +90,13 @@ const SurveyPage = () => {
           </>
         )}
 
-        {step === 3 && (
-          <>
-            <div className="mb-4">
-              <label>Monthly Budget ($):</label>
-              <input
-                type="number"
-                value={formData.budget}
-                onChange={(e) => handleChange("budget", e.target.value)}
-                className="w-full px-3 py-2 rounded text-black"
-              />
-            </div>
-            <div>
-              <label>Max Commute Time (in minutes):</label>
-              <input
-                type="number"
-                value={formData.commute}
-                onChange={(e) => handleChange("commute", e.target.value)}
-                className="w-full px-3 py-2 rounded text-black"
-              />
-            </div>
-          </>
-        )}
-
         <div className="flex justify-between mt-6">
           {step > 1 && (
             <button type="button" onClick={prevStep} className="bg-white text-blue-800 px-4 py-2 rounded-lg">
               Back
             </button>
           )}
-          {step < 3 ? (
+          {step < 2 ? (
             <button type="button" onClick={nextStep} className="bg-white text-blue-800 px-4 py-2 rounded-lg">
               Next
             </button>
