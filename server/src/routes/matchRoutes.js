@@ -61,4 +61,4 @@ router.get("/neighborhood/:id", async (req, res) => {
   }
 });
 
-export default router; // ✅ this makes the import work
+export default router;  
