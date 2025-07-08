@@ -64,9 +64,9 @@ cd NeighborFit
 cd server
 npm install
 ```
-# create a .env file with:
-# MONGO_URI = your MongoDB Atlas connection string
-# PORT = 5000
+- create a .env file with:
+- MONGO_URI = your MongoDB Atlas connection string
+- PORT = 5000
 ```
 npm start
 ```
@@ -80,5 +80,5 @@ npm start
 
 ```
 ## 🌍 Deployment
-Frontend (Vercel) 
-Backend (Render)
+-Frontend (Vercel) 
+-Backend (Render)
